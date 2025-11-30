@@ -1,0 +1,8 @@
+pygame
+vosk
+sounddevice
+pyaudio
+speechrecognition
+pocketsphinx
+whisper.ai
+soundfile
