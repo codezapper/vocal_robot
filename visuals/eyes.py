@@ -604,3 +604,32 @@ class RoboEyes:
 
         # Limit to 60 FPS
         clock.tick(60)
+
+
+    @staticmethod
+    def run_as_thread(commands_queue, screen_width=800, screen_height=480):
+        window = pygame.display.set_mode((screen_width, screen_height))
+        pygame.display.set_caption("RoboEyes Simulation")
+
+        draw_surface = pygame.Surface((screen_width, screen_width))
+        robo_eyes = RoboEyes(draw_surface, window, width=screen_width, height=screen_width, frame_rate=50)
+        draw_surface.fill(robo_eyes.colors["BACKGROUND"])  # Ensure it's cleared initially
+        robo_eyes.begin()
+
+        robo_eyes.setMood(robo_eyes.moods["DEFAULT"])
+        robo_eyes.setAutoblinker(True, interval=2, variation=3)
+        robo_eyes.setIdleMode(True, interval=5, variation=5)
+        robo_eyes.setCuriosity(True)
+        # robo_eyes.setCyclops(False)
+        # robo_eyes.setHFlicker(True, amplitude=4)
+        # robo_eyes.setVFlicker(True, amplitude=20)
+        clock = pygame.time.Clock()
+
+        while True:
+            robo_eyes.keep_going(commands_queue, clock)
+            try:
+                command = commands_queue.get_nowait()
+                if command in robo_eyes.moods:
+                    robo_eyes.setMood(robo_eyes.moods[command])
+            except queue.Empty:
+                pass
